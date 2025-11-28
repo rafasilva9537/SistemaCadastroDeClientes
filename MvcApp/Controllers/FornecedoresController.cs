@@ -57,17 +57,32 @@ public class FornecedoresController : Controller
         _dbContext.Fornecedores.Add(fornecedorModel);
         await _dbContext.SaveChangesAsync();
         
-        return RedirectToAction("Index");
-    }
+        return RedirectToAction(nameof(Criado), new { idPublico = fornecedorModel.IdPublico });
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> Criado(Guid idPublico)
+        {
+            var fornecedor = await _dbContext.Fornecedores
+                .Where(f => f.IdPublico == idPublico)
+                .Select(FornecedorMappers.ProjectToFornecedorViewModel)
+                .FirstOrDefaultAsync();
 
-    public IActionResult Editar(int id)
-    {
-        return View();
-    }
+            if (fornecedor is null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
-    public IActionResult Deletar(int id)
-    {
-        return RedirectToAction("Index");
-    }
+            return View(fornecedor);
+        }
+
+        public IActionResult Editar(int id)
+        {
+            return View();
+        }
+
+        public IActionResult Deletar(int id)
+        {
+            return RedirectToAction("Index");
+        }
 }

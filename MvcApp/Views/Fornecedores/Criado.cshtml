@@ -1,0 +1,58 @@
+@using MvcApp.ViewModels.Fornecedor
+@model FornecedorViewModel;
+
+@{
+    ViewData["Title"] = "Fornecedor criado";
+}
+
+<main class="row justify-content-center">
+    <section class="col-md-8 col-lg-6">
+        <header class="mb-3">
+            <h1>Fornecedor criado</h1>
+        </header>
+
+        <article class="card">
+            <header class="card-header">
+                <h2 class="h5 mb-0">Dados do fornecedor</h2>
+            </header>
+
+            <div class="card-body">
+                <p class="text-success">
+                    O fornecedor <strong>@Model.Nome</strong> foi criado com sucesso.
+                </p>
+
+                <dl class="mb-0">
+                    <div class="mb-2">
+                        <dt class="fw-semibold">Nome</dt>
+                        <dd>@Model.Nome</dd>
+                    </div>
+
+                    <div class="mb-2">
+                        <dt class="fw-semibold">CNPJ</dt>
+                        <dd>@Model.Cnpj</dd>
+                    </div>
+
+                    <div class="mb-2">
+                        <dt class="fw-semibold">CEP</dt>
+                        <dd>@Model.Cep</dd>
+                    </div>
+
+                    <div class="mb-2">
+                        <dt class="fw-semibold">Endereço</dt>
+                        <dd>@Model.Endereco</dd>
+                    </div>
+
+                    <div class="mb-2">
+                        <dt class="fw-semibold">Segmento</dt>
+                        <dd>@Model.Segmento</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <footer class="card-footer d-flex gap-2">
+                <a class="btn btn-primary" asp-action="Index">Voltar para a lista</a>
+                <a class="btn btn-secondary" asp-action="Criar">Criar outro fornecedor</a>
+            </footer>
+        </article>
+    </section>
+</main>
