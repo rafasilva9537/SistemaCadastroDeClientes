@@ -1,0 +1,38 @@
+﻿@model List<MvcApp.ViewModels.FornecedorViewModel>;
+
+@{
+    ViewData["Title"] = "Fornecedores";
+}
+
+<h1>Fornecedores</h1>
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Cnpj</th>
+            <th>Cep</th>
+            <th>Endereço</th>
+            <th>Segmento</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var fornecedor in Model)
+        {
+            string endereco = fornecedor.Endereco;
+            var enderecoTruncado = endereco.Length > 30 ? $"{endereco[..30]}..." : endereco;
+            <tr>
+                <td>@fornecedor.Nome</td>
+                <td>@fornecedor.Cnpj</td>
+                <td>@fornecedor.Cep</td>
+                <td>@enderecoTruncado</td>
+                <td>@fornecedor.Segmento</td>
+                <td>
+                    <button type="button" class="btn btn-primary">Editar</button>
+                    <button type="button" class="btn btn-danger" >Excluir</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

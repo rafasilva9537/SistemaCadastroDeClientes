@@ -1,13 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MvcApp.Data;
+using MvcApp.Mappers;
 using MvcApp.ViewModels;
 
 namespace MvcApp.Controllers;
 
 public class FornecedoresController : Controller
 {
-    public IActionResult Index()
+    private readonly AppDbContext _dbContext;
+
+    public FornecedoresController(AppDbContext dbContext)
     {
-        return View();
+        _dbContext = dbContext;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        var fornecedoresViewModel = await _dbContext.Fornecedores
+            .Select(FornecedoresMappers.ProjectToFornecedorViewModel)
+            .ToListAsync();
+
+        return View(fornecedoresViewModel);
     }
 
     [HttpPost]
@@ -24,10 +38,5 @@ public class FornecedoresController : Controller
     public IActionResult Deletar(int id)
     {
         return RedirectToAction("Index");
-    }
-
-    public IActionResult Detalhes(int id)
-    {
-        return View();
     }
 }
