@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace MvcApp.ViewModels.Fornecedor;
 
@@ -16,6 +17,9 @@ public class CriarFornecedorViewModel
     [RegularExpression("^[0-9]{8}$", ErrorMessage = "CEP deve conter 8 dígitos.")]
     public string Cep { get; set; } = string.Empty;
 
+    [BindNever]
+    public string Endereco { get; set; } = string.Empty;
+    
     // public string FotoPerfilPath { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Segmento é obrigatório.")]

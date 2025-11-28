@@ -26,6 +26,11 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label">Endereço</label>
+        <input class="form-control" value="@(Model.Fornecedor?.Endereco ?? string.Empty)" disabled />
+    </div>
+    
+    <div class="mb-3">
         <select asp-for="Fornecedor.SegmentoId" class="form-select">
             @foreach (var segmento in Model.Segmentos ?? [])
             {
@@ -37,3 +42,7 @@
 
     <button type="submit" class="btn btn-primary">Criar Fornecedor</button>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
