@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MvcApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,13 @@ string? connectionString = builder.Configuration.GetConnectionString("DefaultCon
 builder.Services.AddSqlServer<AppDbContext>(connectionString);
 
 var app = builder.Build();
+
+if (!app.Environment.IsProduction())
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

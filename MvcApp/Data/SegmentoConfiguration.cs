@@ -11,6 +11,7 @@ public class SegmentoConfiguration : IEntityTypeConfiguration<Segmento>
         builder.ToTable("Segmentos");
         builder.HasKey(s => s.Id);
 
-        builder.Property(s => s.Name).HasMaxLength(100);
+        builder.Property(s => s.Nome).HasMaxLength(100);
+        builder.HasIndex(s => s.Nome).IsUnique();
     }
 }

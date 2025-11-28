@@ -17,7 +17,7 @@ namespace MvcApp.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,6 +59,12 @@ namespace MvcApp.Migrations
                 name: "IX_Fornecedores_SegmentoId",
                 table: "Fornecedores",
                 column: "SegmentoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Segmentos_Nome",
+                table: "Segmentos",
+                column: "Nome",
+                unique: true);
         }
 
         /// <inheritdoc />

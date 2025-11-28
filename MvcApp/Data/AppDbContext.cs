@@ -19,4 +19,30 @@ public class AppDbContext : DbContext
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+        optionsBuilder.UseSeeding((context, _) =>
+        {
+            var segmentos = new List<Segmento>
+            {
+                new() { Nome = "Comércio" },
+                new() { Nome = "Serviços" },
+                new() { Nome = "Indústria" },
+            };
+
+            foreach (var segmento in segmentos)
+            {
+                bool segmentoExiste = context.Set<Segmento>().Any(s => s.Nome == segmento.Nome);
+                if (!segmentoExiste)
+                {
+                    context.Set<Segmento>().Add(segmento);
+                }
+            }
+
+            context.SaveChanges();
+        });
+    }
 }

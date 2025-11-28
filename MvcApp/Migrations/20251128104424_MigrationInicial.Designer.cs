@@ -12,7 +12,7 @@ using MvcApp.Data;
 namespace MvcApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251128093838_MigrationInicial")]
+    [Migration("20251128104424_MigrationInicial")]
     partial class MigrationInicial
     {
         /// <inheritdoc />
@@ -84,12 +84,15 @@ namespace MvcApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Nome")
+                        .IsUnique();
 
                     b.ToTable("Segmentos", (string)null);
                 });
