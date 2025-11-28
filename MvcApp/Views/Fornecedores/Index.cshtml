@@ -32,9 +32,13 @@
                 <td>@fornecedor.Cep</td>
                 <td>@enderecoTruncado</td>
                 <td>@fornecedor.Segmento</td>
-                <td>
-                    <button type="button" class="btn btn-primary">Editar</button>
-                    <button type="button" class="btn btn-danger" >Excluir</button>
+                <td class="text-end">
+                    <a class="btn btn-primary btn-sm"
+                       asp-action="Editar"
+                       asp-route-idPublico="@fornecedor.IdPublico">
+                        Editar
+                    </a>
+                    <button type="button" class="btn btn-danger btn-sm">Excluir</button>
                 </td>
             </tr>
         }

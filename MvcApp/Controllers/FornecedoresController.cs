@@ -58,31 +58,78 @@ public class FornecedoresController : Controller
         await _dbContext.SaveChangesAsync();
         
         return RedirectToAction(nameof(Criado), new { idPublico = fornecedorModel.IdPublico });
-        }
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Criado(Guid idPublico)
+    [HttpGet]
+    public async Task<IActionResult> Criado(Guid idPublico)
+    {
+        var fornecedor = await _dbContext.Fornecedores
+            .Where(f => f.IdPublico == idPublico)
+            .Select(FornecedorMappers.ProjectToFornecedorViewModel)
+            .FirstOrDefaultAsync();
+
+        if (fornecedor is null)
         {
-            var fornecedor = await _dbContext.Fornecedores
-                .Where(f => f.IdPublico == idPublico)
-                .Select(FornecedorMappers.ProjectToFornecedorViewModel)
-                .FirstOrDefaultAsync();
-
-            if (fornecedor is null)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(fornecedor);
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Editar(int id)
+        return View(fornecedor);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Editar(Guid idPublico)
+    {
+        var fornecedor = await _dbContext.Fornecedores
+            .Where(f => f.IdPublico == idPublico)
+            .FirstOrDefaultAsync();
+
+        if (fornecedor is null)
         {
-            return View();
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Deletar(int id)
+        var segmentosViewModels = await _dbContext.Segmentos
+            .Select(SegmentoMappers.ProjectToSegmentoViewModel)
+            .ToListAsync();
+
+        var viewModel = fornecedor.ToEditarFornecedorViewModel(segmentosViewModels);
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Editar(EditarFornecedorViewModel form)
+    {
+        if (!ModelState.IsValid)
         {
-            return RedirectToAction("Index");
+            form.Segmentos = await _dbContext.Segmentos
+                .Select(SegmentoMappers.ProjectToSegmentoViewModel)
+                .ToListAsync();
+
+            return View(form);
         }
+
+        var fornecedor = await _dbContext.Fornecedores
+            .Where(f => f.IdPublico == form.IdPublico)
+            .FirstOrDefaultAsync();
+
+        if (fornecedor is null)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        fornecedor.Nome = form.Nome;
+        fornecedor.Cnpj = form.Cnpj;
+        fornecedor.Cep = form.Cep;
+        fornecedor.SegmentoId = form.SegmentoId;
+
+        await _dbContext.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Criado), new { idPublico = fornecedor.IdPublico });
+    }
+
+    public IActionResult Deletar(int id)
+    {
+        return RedirectToAction("Index");
+    }
 }

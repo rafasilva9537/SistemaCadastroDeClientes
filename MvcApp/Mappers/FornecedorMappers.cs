@@ -1,7 +1,7 @@
 ﻿using MvcApp.Models;
 using MvcApp.ViewModels.Fornecedor;
-using System.Collections.Generic;
 using System.Linq.Expressions;
+using MvcApp.ViewModels.Segmentos;
 
 namespace MvcApp.Mappers;
 
@@ -34,6 +34,31 @@ public static class FornecedorMappers
             Cnpj = fornecedorViewModel.Cnpj,
             Cep = fornecedorViewModel.Cep,
             SegmentoId = fornecedorViewModel.SegmentoId,
+        };
+    }
+    
+    public static Expression<Func<Fornecedor, EditarFornecedorViewModel>> ProjectToEditarFornecedorViewModel
+        = fornecedor => new EditarFornecedorViewModel
+        {
+            IdPublico = fornecedor.IdPublico,
+            Nome = fornecedor.Nome,
+            Cnpj = fornecedor.Cnpj,
+            Cep = fornecedor.Cep,
+            Endereco = fornecedor.Endereco,
+            SegmentoId = fornecedor.SegmentoId
+        };
+    
+    public static EditarFornecedorViewModel ToEditarFornecedorViewModel(this Fornecedor fornecedor, List<SegmentoViewModel> segmentos)
+    {
+        return new EditarFornecedorViewModel
+        {
+            IdPublico = fornecedor.IdPublico,
+            Nome = fornecedor.Nome,
+            Cnpj = fornecedor.Cnpj,
+            Cep = fornecedor.Cep,
+            Endereco = fornecedor.Endereco,
+            SegmentoId = fornecedor.SegmentoId,
+            Segmentos = segmentos
         };
     }
 }

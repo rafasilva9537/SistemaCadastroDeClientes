@@ -1,0 +1,53 @@
+@model MvcApp.ViewModels.Fornecedor.EditarFornecedorViewModel;
+
+@{
+    ViewData["Title"] = "Editar Fornecedor";
+}
+
+<h1>Editar Fornecedor</h1>
+
+<form asp-action="Editar" method="post">
+    <input type="hidden" asp-for="IdPublico" />
+
+    <div class="mb-3">
+        <label asp-for="Nome" class="form-label"></label>
+        <input asp-for="Nome" class="form-control" />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Cnpj" class="form-label"></label>
+        <input asp-for="Cnpj" class="form-control" />
+        <span asp-validation-for="Cnpj" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Cep" class="form-label"></label>
+        <input asp-for="Cep" class="form-control" />
+        <span asp-validation-for="Cep" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Endereço</label>
+        <input class="form-control" value="@Model.Endereco" disabled />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SegmentoId" class="form-label"></label>
+        <select asp-for="SegmentoId" class="form-select">
+            <option value="">Selecione um segmento</option>
+            @foreach (var segmento in Model.Segmentos ?? [])
+            {
+                <option value="@segmento.Id">@segmento.Nome</option>
+            }
+        </select>
+        <span asp-validation-for="SegmentoId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar alterações</button>
+    <a class="btn btn-secondary" asp-action="Index">Cancelar</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
