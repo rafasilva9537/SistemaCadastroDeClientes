@@ -10,7 +10,7 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<Fornecedor> Fornecedors { get; set; }
+    public DbSet<Fornecedor> Fornecedores { get; set; }
     public DbSet<Segmento> Segmentos { get; set; }
 
 
