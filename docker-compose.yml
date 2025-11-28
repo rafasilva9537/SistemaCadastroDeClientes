@@ -1,0 +1,6 @@
+services:
+  mvcapp:
+    image: ${DOCKER_REGISTRY-}mvcapp
+    build:
+      context: .
+      dockerfile: MvcApp/Dockerfile
