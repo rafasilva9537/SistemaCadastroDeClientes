@@ -20,6 +20,7 @@ public class FornecedoresController : Controller
     public async Task<IActionResult> Index()
     {
         var fornecedoresViewModel = await _dbContext.Fornecedores
+            .OrderByDescending(f => f.Id)
             .Select(FornecedorMappers.ProjectToFornecedorViewModel)
             .ToListAsync();
 
