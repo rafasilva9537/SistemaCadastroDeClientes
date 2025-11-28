@@ -8,9 +8,7 @@ public class CriarFornecedorViewModel
 
     public string Cep { get; set; } = string.Empty;
 
-    public string Endereco { get; set; } = string.Empty;
-
     // public string FotoPerfilPath { get; set; } = string.Empty;
 
-    public string Segmento { get; set; } = string.Empty;
+    public int SegmentoId { get; set; }
 }
