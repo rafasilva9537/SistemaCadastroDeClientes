@@ -28,8 +28,8 @@
             var enderecoTruncado = endereco.Length > 30 ? $"{endereco[..30]}..." : endereco;
             <tr>
                 <td>@fornecedor.Nome</td>
-                <td>@fornecedor.Cnpj</td>
-                <td>@fornecedor.Cep</td>
+                <td>@fornecedor.CnpjFormatado</td>
+                <td>@fornecedor.CepFormatado</td>
                 <td>@enderecoTruncado</td>
                 <td>@fornecedor.Segmento</td>
                 <td class="text-end">
