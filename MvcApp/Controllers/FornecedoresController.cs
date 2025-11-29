@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using MvcApp.Constantes;
 using MvcApp.Data;
@@ -72,54 +73,8 @@ public class FornecedoresController : Controller
 
        var fornecedor = criarFornecedorViewModel.ToFornecedorModel();
 
-       try
-       {
-           var clienteHttp = httpClientFactory.CreateClient(ServicosExternosConstantes.ClienteViaCep);
-           var cepResponse = await clienteHttp.GetFromJsonAsync<ViaCepResponse>($"{fornecedor.Cep}/json/");
-
-           if (cepResponse is null)
-           {
-               ModelState.AddModelError(
-                   nameof(criarFornecedorViewModel.Cep),
-                   "Não foi possível consultar o serviço de CEP.");
-           }
-           else if (cepResponse.Erro.Equals("true"))
-           {
-               // CEP válido com 8 dígitos mas inexistente na base do ViaCEP
-               ModelState.AddModelError(
-                   nameof(criarFornecedorViewModel.Cep),
-                   "CEP não encontrado.");
-           }
-           else
-           {
-               fornecedor.Endereco = MontarEndereco(cepResponse);
-               _logger.LogInformation("Cep {FornecedorCep} retornado: {@ViaCepResponse}", fornecedor.Cep, cepResponse);
-           }
-       }
-       catch (HttpRequestException ex)
-       {
-           _logger.LogError(ex, "Erro HTTP ao consultar ViaCEP para CEP {Cep}", fornecedor.Cep);
-           ModelState.AddModelError(
-               nameof(criarFornecedorViewModel.Cep),
-               "Erro ao consultar o serviço de CEP. Tente novamente mais tarde.");
-       }
-       catch (JsonException ex)
-       {
-           _logger.LogError(ex, "Error ao desserializar resposta da api ViaCEP para o CEP {Cep}", fornecedor.Cep);
-           ModelState.AddModelError(
-               nameof(criarFornecedorViewModel.Cep),
-               "Erro inesperado ao consultar o CEP.");
-       }
-       catch (Exception ex)
-       {
-           _logger.LogError(ex, "Erro inesperado ao consultar ViaCEP para CEP {Cep}", fornecedor.Cep);
-           ModelState.AddModelError(
-               nameof(criarFornecedorViewModel.Cep),
-               "Erro inesperado ao consultar o CEP.");
-           throw;
-       }
-
-       if (!ModelState.IsValid)
+       string? endereco = await ObterEnderecoOuAdiconarErroAsync(fornecedor.Cep, httpClientFactory, ModelState);
+       if (endereco is null)
        {
            // Se deu algum erro na consulta do CEP, voltamos para a tela
            criarFornecedorViewModel.Segmentos = await _dbContext.Segmentos
@@ -129,13 +84,75 @@ public class FornecedoresController : Controller
            return View(criarFornecedorViewModel);
        }
 
+       fornecedor.Endereco = endereco;
        _dbContext.Fornecedores.Add(fornecedor);
        await _dbContext.SaveChangesAsync();
 
        return RedirectToAction(nameof(Criado), new { idPublico = fornecedor.IdPublico });
    }
 
-    [HttpGet]
+   /// <summary>
+   /// Consulta o ViaCEP e retorna o endereço formatado ou adiciona erros ao ModelState.
+   /// Em caso de erro, retorna null.
+   /// </summary>
+   private async Task<string?> ObterEnderecoOuAdiconarErroAsync(
+       string cep,
+       IHttpClientFactory httpClientFactory, 
+       ModelStateDictionary modelState)
+   {
+       try
+       {
+           var clienteHttp = httpClientFactory.CreateClient(ServicosExternosConstantes.ClienteViaCep);
+           var cepResponse = await clienteHttp.GetFromJsonAsync<ViaCepResponse>($"{cep}/json/");
+
+           if (cepResponse is null)
+           {
+               modelState.AddModelError(
+                   nameof(CriarFornecedorViewModel.Cep),
+                   "Não foi possível consultar o serviço de CEP.");
+               return null;
+           }
+           
+           if (cepResponse.Erro.Equals("true"))
+           {
+               // CEP válido com 8 dígitos mas inexistente na base do ViaCEP
+               modelState.AddModelError(
+                   nameof(CriarFornecedorViewModel.Cep),
+                   "CEP não encontrado.");
+               return null;
+           }
+
+           _logger.LogInformation("Cep {FornecedorCep} retornado: {@ViaCepResponse}", cep, cepResponse);
+           string endereco = MontarEndereco(cepResponse);
+           return endereco;
+       }
+       catch (HttpRequestException ex)
+       {
+           _logger.LogError(ex, "Erro HTTP ao consultar ViaCEP para CEP {Cep}", cep);
+           modelState.AddModelError(
+               nameof(CriarFornecedorViewModel.Cep),
+               "Erro ao consultar o serviço de CEP. Tente novamente mais tarde.");
+           return null;
+       }
+       catch (JsonException ex)
+       {
+           _logger.LogError(ex, "Error ao desserializar resposta da api ViaCEP para o CEP {Cep}", cep);
+           modelState.AddModelError(
+               nameof(CriarFornecedorViewModel.Cep),
+               "Erro inesperado ao consultar o CEP.");
+           return null;
+       }
+       catch (Exception ex)
+       {
+           _logger.LogError(ex, "Erro inesperado ao consultar ViaCEP para CEP {Cep}", cep);
+           modelState.AddModelError(
+               nameof(CriarFornecedorViewModel.Cep),
+               "Erro inesperado ao consultar o CEP.");
+           throw;
+       }
+   }
+
+   [HttpGet]
     public async Task<IActionResult> Criado(Guid idPublico)
     {
         var fornecedor = await _dbContext.Fornecedores
