@@ -1,6 +1,16 @@
 @using MvcApp.ViewModels.Fornecedor
 @model FornecedorViewModel
 
+@if (!string.IsNullOrWhiteSpace(Model.FotoPerfilPath))
+{
+    <div class="mb-3 text-center">
+        <img src="@Model.FotoPerfilUrl"
+             alt="Foto do fornecedor @Model.Nome"
+             class="img-thumbnail"
+             style="max-width: 80%; height: auto;" />
+    </div>
+}
+
 <dl class="mb-0">
     <div class="mb-2">
         <dt class="fw-semibold">Nome</dt>

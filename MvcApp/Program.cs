@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MvcApp.Configs;
 using MvcApp.Constantes;
 using MvcApp.Data;
+using MvcApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,8 @@ builder.Services.AddHttpClient(ServicosExternosConstantes.ClienteViaCep, (httpCl
     
     httpClient.BaseAddress = new Uri(urlBase);
 });
+
+builder.Services.AddScoped<IImagemService, ImagemLocalService>();
 
 var app = builder.Build();
 

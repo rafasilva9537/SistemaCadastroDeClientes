@@ -1,12 +1,11 @@
-﻿
-@model MvcApp.ViewModels.Fornecedor.CriarFornecedorViewModel;
+﻿@model MvcApp.ViewModels.Fornecedor.CriarFornecedorViewModel;
 @{
     ViewData["Title"] = "Criar Fornecedor";
 }
 
 <h1>Criar Fornecedor</h1>
 
-<form asp-action="Criar" method="post">
+<form asp-action="Criar" method="post" enctype="multipart/form-data">
     <div class="mb-3">
         <label asp-for="Nome"></label>
         <input asp-for="Nome" class="form-control" placeholder="Ex: Nova Eletrônicos" />
@@ -33,6 +32,15 @@
             }
         </select>
         <span asp-validation-for="SegmentoId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FotoPerfil" class="form-label">Foto do fornecedor</label>
+        <input asp-for="FotoPerfil" 
+               type="file" 
+               accept="image/jpeg, image/png" 
+               class="form-control" />
+        <span asp-validation-for="FotoPerfil" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Criar Fornecedor</button>

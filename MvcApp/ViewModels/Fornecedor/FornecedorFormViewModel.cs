@@ -18,6 +18,13 @@ public class FornecedorFormViewModel
     [RegularExpression("^[0-9]{8}$", ErrorMessage = "CEP deve conter 8 dígitos.")]
     public string Cep { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = "Segmento é obrigatório.")]
+    [Range(1, int.MaxValue, ErrorMessage = "Segmento inválido.")]
+    public int SegmentoId { get; set; }
+    
+    public IFormFile? FotoPerfil { get; set; }
+    
+    
     /// <summary>
     /// CNPJ no formato 00.000.000/0000-00
     /// </summary>
@@ -36,17 +43,14 @@ public class FornecedorFormViewModel
     [BindNever]
     public string Endereco { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Segmento é obrigatório.")]
-    [Range(1, int.MaxValue, ErrorMessage = "Segmento inválido.")]
-    public int SegmentoId { get; set; }
-
     [BindNever]
     public List<SegmentoViewModel>? Segmentos { get; set; }
-
+    
+    
     private static string FormataCnpj(string cnpj)
     {
         if (string.IsNullOrWhiteSpace(cnpj) || cnpj.Length != 14) return cnpj;
-        
+    
         return $"{cnpj[..2]}.{cnpj[2..5]}.{cnpj[5..8]}/{cnpj[8..12]}-{cnpj[12..14]}";
     }
 

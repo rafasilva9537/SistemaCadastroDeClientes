@@ -7,6 +7,7 @@ using MvcApp.Data;
 using MvcApp.Dtos;
 using MvcApp.Helper;
 using MvcApp.Mappers;
+using MvcApp.Services;
 using MvcApp.ViewModels.Fornecedor;
 
 namespace MvcApp.Controllers;
@@ -15,11 +16,16 @@ public class FornecedoresController : Controller
 {
     private readonly AppDbContext _dbContext;
     private readonly ILogger<FornecedoresController> _logger;
+    private readonly IImagemService _imagemService;
 
-    public FornecedoresController(AppDbContext dbContext, ILogger<FornecedoresController> logger)
+    public FornecedoresController(
+        AppDbContext dbContext, 
+        ILogger<FornecedoresController> logger,
+        IImagemService imagemService)
     {
         _dbContext = dbContext;
         _logger = logger;
+        _imagemService = imagemService;
     }
 
     public async Task<IActionResult> Index()
@@ -86,6 +92,17 @@ public class FornecedoresController : Controller
         }
 
         fornecedor.Endereco = endereco;
+        
+        // Upload da foto de perfil, se informado
+        const int tamanhoMaximoBytes = 1024 * 1024 * 3; // 3MB
+        if (criarFornecedorViewModel.FotoPerfil is { Length: > 0 and < tamanhoMaximoBytes })
+        {
+            var fotoPerfil = criarFornecedorViewModel.FotoPerfil;
+            string caminhoRelativoImagem = await _imagemService.SalvarImagemAsync(fotoPerfil, "fornecedores");
+            fornecedor.FotoPerfilPath = caminhoRelativoImagem;
+            _logger.LogInformation("Foto de perfil salva com sucesso: {NomeImagem}", caminhoRelativoImagem);
+        }
+        
         _dbContext.Fornecedores.Add(fornecedor);
         await _dbContext.SaveChangesAsync();
 

@@ -18,6 +18,7 @@ public class Fornecedor
 
     /// <summary>
     /// Endereço da foto do fornecedor, representando o caminho onde a imagem está armazenada.
+    /// Ex: imagens\fornecedores\xxx.jpg
     /// </summary>
     public string FotoPerfilPath { get; set; } = string.Empty;
 

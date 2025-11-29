@@ -21,9 +21,9 @@ public static class FornecedorMappers
             Cnpj = fornecedor.Cnpj,
             Cep = fornecedor.Cep,
             Endereco = fornecedor.Endereco,
-            Segmento = fornecedor.Segmento.Nome
+            Segmento = fornecedor.Segmento.Nome,
+            FotoPerfilPath = fornecedor.FotoPerfilPath
         };
-
 
     // ViewModel para Model
     public static Fornecedor ToFornecedorModel(this CriarFornecedorViewModel fornecedorViewModel)
