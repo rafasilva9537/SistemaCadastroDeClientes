@@ -14,13 +14,29 @@
 
     <div class="mb-3">
         <label asp-for="Cnpj"></label>
-        <input asp-for="Cnpj" class="form-control" placeholder="Ex: 12345678000199" />
+
+        <!-- Campo REAL: validado pelo MVC -->
+        <input asp-for="Cnpj" type="hidden" id="Cnpj" />
+
+        <!-- Campo VISUAL: só para digitação -->
+        <input type="text"
+           id="CnpjMascara"
+           class="form-control"
+           placeholder="Ex: 12.345.678/0001-99" />
+
         <span asp-validation-for="Cnpj" class="text-danger"></span>
     </div>
-
+    
     <div class="mb-3">
         <label asp-for="Cep"></label>
-        <input asp-for="Cep" class="form-control" placeholder="Ex: 12345678" />
+
+        <input asp-for="Cep" type="hidden" id="Cep" />
+
+        <input type="text"
+               id="CepMascara"
+               class="form-control"
+               placeholder="Ex: 12345-678" />
+
         <span asp-validation-for="Cep" class="text-danger"></span>
     </div>
     
@@ -49,4 +65,54 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://cdn.jsdelivr.net/npm/imask@7/dist/imask.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cnpjHidden = document.getElementById('Cnpj');
+            const cnpjMaskEl = document.getElementById('CnpjMascara');
+            const cepHidden = document.getElementById('Cep');
+            const cepMaskEl = document.getElementById('CepMascara');
+            
+            if (cnpjMaskEl && cnpjHidden) {
+                const cnpjMask = IMask(cnpjMaskEl, { mask: '00.000.000/0000-00' });
+
+                // Se já vier valor do servidor (ex: post com erro), aplica no campo visual
+                if (cnpjHidden.value && cnpjHidden.value.length === 14) {
+                    cnpjMask.unmaskedValue = cnpjHidden.value;
+                }
+
+                // Sempre que o usuário digitar, atualiza o hidden com o valor puro
+                cnpjMask.on('accept', function () {
+                    cnpjHidden.value = cnpjMask.unmaskedValue;
+                });
+            }
+            
+            if (cepMaskEl && cepHidden) {
+                const cepMask = IMask(cepMaskEl, { mask: '00000-000' });
+
+                if (cepHidden.value && cepHidden.value.length === 8) {
+                    cepMask.unmaskedValue = cepHidden.value;
+                }
+
+                cepMask.on('accept', function () {
+                    cepHidden.value = cepMask.unmaskedValue;
+                });
+            }
+
+            // Segurança extra no submit
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function () {
+                    if (window.cnpjMask && cnpjHidden) {
+                        cnpjHidden.value = cnpjMask.unmaskedValue;
+                    }
+                    if (window.cepMask && cepHidden) {
+                        cepHidden.value = cepMask.unmaskedValue;
+                    }
+                });
+            }
+        });
+    </script>
 }
