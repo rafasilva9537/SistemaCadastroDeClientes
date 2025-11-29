@@ -132,8 +132,38 @@ public class FornecedoresController : Controller
         return RedirectToAction(nameof(Criado), new { idPublico = fornecedor.IdPublico });
     }
 
-    public IActionResult Deletar(int id)
+    [HttpGet]
+    public async Task<IActionResult> Excluir(Guid idPublico)
     {
-        return RedirectToAction("Index");
+        var fornecedor = await _dbContext.Fornecedores
+            .Where(f => f.IdPublico == idPublico)
+            .Select(FornecedorMappers.ProjectToFornecedorViewModel)
+            .FirstOrDefaultAsync();
+
+        if (fornecedor is null)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        return View(fornecedor);
+    }
+
+    [HttpPost, ActionName("Excluir")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ExcluirConfirmado(Guid idPublico)
+    {
+        var fornecedor = await _dbContext.Fornecedores
+            .Where(f => f.IdPublico == idPublico)
+            .FirstOrDefaultAsync();
+
+        if (fornecedor is null)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        _dbContext.Fornecedores.Remove(fornecedor);
+        await _dbContext.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
     }
 }

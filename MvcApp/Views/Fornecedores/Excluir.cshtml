@@ -1,0 +1,61 @@
+@using MvcApp.ViewModels.Fornecedor
+@model FornecedorViewModel;
+
+@{
+    ViewData["Title"] = "Excluir Fornecedor";
+}
+
+<main class="row justify-content-center">
+    <section class="col-md-8 col-lg-6">
+        <header class="mb-3">
+            <h1>Excluir Fornecedor</h1>
+        </header>
+
+        <article class="card">
+            <header class="card-header">
+                <h2 class="h5 mb-0">Dados do fornecedor</h2>
+            </header>
+
+            <div class="card-body">
+                <p class="text-danger">
+                    Tem certeza que deseja excluir o fornecedor <strong>@Model.Nome</strong>?
+                </p>
+
+                <dl class="mb-0">
+                    <div class="mb-2">
+                        <dt class="fw-semibold">Nome</dt>
+                        <dd>@Model.Nome</dd>
+                    </div>
+
+                    <div class="mb-2">
+                        <dt class="fw-semibold">CNPJ</dt>
+                        <dd>@Model.Cnpj</dd>
+                    </div>
+
+                    <div class="mb-2">
+                        <dt class="fw-semibold">CEP</dt>
+                        <dd>@Model.Cep</dd>
+                    </div>
+
+                    <div class="mb-2">
+                        <dt class="fw-semibold">Endereço</dt>
+                        <dd>@Model.Endereco</dd>
+                    </div>
+
+                    <div class="mb-2">
+                        <dt class="fw-semibold">Segmento</dt>
+                        <dd>@Model.Segmento</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <footer class="card-footer d-flex gap-2">
+                <form asp-action="Excluir" method="post" class="m-0">
+                    <input type="hidden" name="idPublico" value="@Model.IdPublico" />
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </footer>
+        </article>
+    </section>
+</main>
