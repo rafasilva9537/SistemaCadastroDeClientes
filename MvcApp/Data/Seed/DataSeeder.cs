@@ -38,7 +38,15 @@ public static class DataSeeder
             .RuleFor(f => f.Nome, f => f.Company.CompanyName())
             .RuleFor(f => f.Cnpj, f => f.Random.Replace("########0001##"))
             .RuleFor(f => f.Cep, f => f.Address.ZipCode("########"))
-            .RuleFor(f => f.Endereco, f => f.Address.FullAddress())
+            .RuleFor(f => f.Endereco, f => 
+                {
+                    string? logradouro = f.Address.StreetAddress();
+                    string? complemento = f.Address.SecondaryAddress();
+                    string? bairro = f.Address.StreetName();
+                    string? cidade = f.Address.City();
+                    string? uf = f.Address.StateAbbr();
+                    return $"{logradouro}, {complemento} - {bairro} - {cidade}/{uf}";
+                })
             .RuleFor(f => f.SegmentoId, f => f.PickRandom(segmentos).Id);
 
         var fornecedores = fornecedorFaker.Generate(quantidade);
