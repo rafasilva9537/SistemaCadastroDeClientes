@@ -6,7 +6,6 @@ namespace MvcApp.ViewModels.Fornecedor;
 
 public class EditarFornecedorViewModel
 {
-    [BindNever]
     public Guid IdPublico { set; get; }
 
     [Required(ErrorMessage = "O nome é obrigatório.")]

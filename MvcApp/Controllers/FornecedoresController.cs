@@ -74,7 +74,7 @@ public class FornecedoresController : Controller
        var fornecedor = criarFornecedorViewModel.ToFornecedorModel();
 
        string? endereco = await ObterEnderecoOuAdiconarErroAsync(fornecedor.Cep, httpClientFactory, ModelState);
-       if (endereco is null)
+       if (!ModelState.IsValid || endereco is null)
        {
            // Se deu algum erro na consulta do CEP, voltamos para a tela
            criarFornecedorViewModel.Segmentos = await _dbContext.Segmentos
@@ -191,7 +191,9 @@ public class FornecedoresController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Editar(EditarFornecedorViewModel form)
+    public async Task<IActionResult> Editar(
+        EditarFornecedorViewModel form, 
+        [FromServices] IHttpClientFactory httpClientFactory)
     {
         bool cnpjExiste = await _dbContext.Fornecedores
             .AnyAsync(f => f.Cnpj == form.Cnpj && f.IdPublico != form.IdPublico);
@@ -202,8 +204,9 @@ public class FornecedoresController : Controller
                 nameof(form.Cnpj),
                 "Já existe outro fornecedor cadastrado com este CNPJ.");
         }
-
-        if (!ModelState.IsValid)
+        
+        string? novoEndereco = await ObterEnderecoOuAdiconarErroAsync(form.Cep, httpClientFactory, ModelState);
+        if (!ModelState.IsValid || novoEndereco is null)
         {
             form.Segmentos = await _dbContext.Segmentos
                 .Select(SegmentoMappers.ProjectToSegmentoViewModel)
@@ -220,11 +223,12 @@ public class FornecedoresController : Controller
         {
             return RedirectToAction(nameof(Index));
         }
-
+        
+        fornecedor.Cep = form.Cep;
         fornecedor.Nome = form.Nome;
         fornecedor.Cnpj = form.Cnpj;
-        fornecedor.Cep = form.Cep;
         fornecedor.SegmentoId = form.SegmentoId;
+        fornecedor.Endereco = novoEndereco ?? fornecedor.Endereco;
 
         await _dbContext.SaveChangesAsync();
 

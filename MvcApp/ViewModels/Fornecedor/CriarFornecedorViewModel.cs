@@ -18,6 +18,9 @@ public class CriarFornecedorViewModel
     [RegularExpression("^[0-9]{8}$", ErrorMessage = "CEP deve conter 8 dígitos.")]
     public string Cep { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Calculado pelo CEP, por isso não fazer binding
+    /// </summary>
     [BindNever]
     public string Endereco { get; set; } = string.Empty;
     
